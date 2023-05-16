@@ -17,6 +17,18 @@ def create_image(prompt : str, size : int = 256, n : int = 1) -> str:
     )
     return response['data'][0]['url']
 
+def display_image(url : str) -> None:
+    """Displays an image from a url."""
+    # Download the image with no SSL context, then display it using PIL
+    import urllib.request
+    import io
+    import PIL.Image
+    import ssl
+    with urllib.request.urlopen(url, context=ssl._create_unverified_context()) as response:
+        image_bytes = response.read()
+    image = PIL.Image.open(io.BytesIO(image_bytes))
+    image.show()
+
 def create_simple_response (prompt : str) -> str:
     """returns the text response from OpenAI from a text prompt."""
     response = openai.ChatCompletion.create(
@@ -39,7 +51,8 @@ def main():
             print (HELP)
         elif cmd[0] == 'i':
             prompt = cmd[2:]
-            print (create_image(prompt))
+            img = create_image(prompt)
+            display_image(img)
         elif cmd[0] == 's':
             prompt = cmd[2:]
             print (create_simple_response(prompt))
