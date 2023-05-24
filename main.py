@@ -1,9 +1,10 @@
 """main.py - simple command line interface to OpenAI's API.
 
 It's quite easy. Prereq:
-* Install the openai library, per https://platform.openai.com/docs/libraries.
-* Obtain an API key at https://platform.openai.com/account/api-keys and set the OPENAI_API_KEY environment variable to the key value
-* Call some APIs. This script has API wrappers for chat and image generation:
+1. Obtain an API key at https://platform.openai.com/account/api-keys
+2. Set the OPENAI_API_KEY environment variable to the key value
+3. Install the openai library, per https://platform.openai.com/docs/libraries.
+4. Call some APIs. This script has API wrappers for chat and image generation:
     * https://platform.openai.com/docs/guides/chat/chat-vs-completions
     * https://platform.openai.com/docs/guides/images/introduction
 But there are many other options.
