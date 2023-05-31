@@ -68,7 +68,7 @@ def main():
     """Main function"""
     print (HELP)
     while True:
-        cmd = input("What do you want to do (type h for help)? ").strip().lower()
+        cmd = input("What do you want to do? ").strip().lower()
         if cmd == 'h':
             print (HELP)
         elif cmd == 'i':
@@ -78,7 +78,7 @@ def main():
         elif cmd == 'q':
             break
         else:
-            print ("Unknown command.")
+            print ("Unknown command. Type h for help.")
     print ("Goodbye!")
 
 if __name__ == "__main__":
