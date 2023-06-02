@@ -2,12 +2,13 @@
 
 It's quite easy. Prereq:
 1. Obtain an API key at https://platform.openai.com/account/api-keys
-2. Either:
-   2a. Set the OPENAI_API_KEY environment variable to the key value, or
-   2b. Add a line of code to set the key value, e.g.:
-           openai.api_key = "sk-xxxxxx"
-       This is easier for testing, but don't check in to public repo or replit
+2. Make the API key available to your code. There are several options:
+   2a. PC Set the OPENAI_API_KEY environment variable to the key value, or
+   2b. Replit: Under tools/secrets, add a key named OPENAI_API_KEY and set the value.
+     Then uncomment the openai.api_key line of code below
 3. Install the openai library, per https://platform.openai.com/docs/libraries.
+    * From personal PC with Python, run "pip install openai"
+    * From Replit, it will automatically do this for you when you run the code
 4. Call some APIs. This script has API wrappers for chat and image generation:
     * https://platform.openai.com/docs/guides/chat/chat-vs-completions
     * https://platform.openai.com/docs/guides/images/introduction
@@ -21,6 +22,10 @@ import io
 import ssl
 import PIL.Image
 import openai   # pylint: disable=import-error
+
+# Replit: Add the API key to the secrets tab and uncomment the following lines
+#import os
+#openai.api_key = os.getenv("OPENAI_API_KEY")
 
 HELP = """
 Available commands:
@@ -83,3 +88,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+import serialize
+
+data = serialize.load_data()
+data["name"] = "Bob"
+serialize.save_data(data)
