@@ -5,7 +5,6 @@ It's quite easy. Prereq:
 2. Make the API key available to your code. There are several options:
    2a. PC Set the OPENAI_API_KEY environment variable to the key value, or
    2b. Replit: Under tools/secrets, add a key named OPENAI_API_KEY and set the value.
-     Then uncomment the openai.api_key line of code below
 3. Install the openai library, per https://platform.openai.com/docs/libraries.
     * From personal PC with Python, run "pip install openai"
     * From Replit, it will automatically do this for you when you run the code
@@ -22,10 +21,9 @@ import io
 import ssl
 import PIL.Image
 import openai   # pylint: disable=import-error
+import os
 
-# Replit: Add the API key to the secrets tab and uncomment the following lines
-#import os
-#openai.api_key = os.getenv("OPENAI_API_KEY")
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 HELP = """
 Available commands:
@@ -89,8 +87,3 @@ def main():
 if __name__ == "__main__":
     main()
 
-import serialize
-
-data = serialize.load_data()
-data["name"] = "Bob"
-serialize.save_data(data)
