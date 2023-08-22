@@ -16,24 +16,32 @@ But there are many other options.
 It's quite inexpensive. See https://platform.openai.com/account/usage.
 """
 
+# pylint: disable=line-too-long
+
+import os
+import sys
 import urllib.request
 import io
-import ssl
 import PIL.Image
-import openai   # pylint: disable=import-error
-import os
+import openai
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 HELP = """
 Available commands:
-h - print this
 c - chat
 i - create an image
-q - quit
+q - create a quiz
+x - exit
 """
 
-def create_image() -> str:
+QUIZ_HELP = """
+Let's create a ChatGPT-generated quiz for each student based on they essay they submitted
+The quiz should not be graded, because ChatGPT is not perfect.
+But a very low score indicated a likelyhood of copying-without-understanding
+"""
+
+def create_image():
     """Create an image from a text prompt"""
     prompt = input("What do you want to see? ")
     size = 256        # Image size can be 256, 512, or 1024
@@ -48,13 +56,13 @@ def create_image() -> str:
     url = response['data'][0]['url']
 
     # Display the image URL
-    with urllib.request.urlopen(url, context=ssl._create_unverified_context()) as response:
+    with urllib.request.urlopen(url) as response:
         image_bytes = response.read()
     image = PIL.Image.open(io.BytesIO(image_bytes))
     image.show()
 
 
-def create_chat () -> str:
+def create_chat ():
     """Start a chat settion with OpenAI's chatbot"""
     prompt = input("What do you want to say? ")
     response = openai.ChatCompletion.create(
@@ -67,23 +75,54 @@ def create_chat () -> str:
     reply = response['choices'][0]['message']['content']
     print (f"OpenAI: {reply}")
 
+def create_quiz ():
+    """Create a quiz"""
+    print (QUIZ_HELP)
+    num_questions = 0
+    while num_questions <= 0 or num_questions > 10:
+        try:
+            num_questions = int(input("How many questions should the quiz contain (1-10)? "))
+        except ValueError:
+            num_questions = 0
+    essay = input ("Paste the student essay? Type an empty line with END to end the essay input.\n")
+    while True:
+        next_line = input().strip()
+        if next_line.upper() == "END":
+            break
+        essay += "\n" + next_line
+
+    print ("Creating quiz, be patient...")
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": f"Create a multiple choice quiz with {num_questions} questions based on a student essay. The goal of the quiz is to make sure the student understood the essay they submitted, and didn't just copy it without understanding what they wrote."},
+            {"role": "user", "content": f"Essay: {essay}"},
+        ],
+        temperature=0.2,
+    )
+    reply = response['choices'][0]['message']['content']
+    print (f"{reply}")
+
+def goodbye():
+    """Quit the program"""
+    print ("Goodbye!")
+    sys.exit(0)
+
 def main():
     """Main function"""
-    print (HELP)
+    command_map = {
+        'i': create_image,
+        'c': create_chat,
+        'q': create_quiz,
+        'x': goodbye
+    }
     while True:
         cmd = input("What do you want to do? ").strip().lower()
-        if cmd == 'h':
-            print (HELP)
-        elif cmd == 'i':
-            create_image()
-        elif cmd == 'c':
-            create_chat()
-        elif cmd == 'q':
-            break
+        if cmd in command_map:
+            command_map[cmd]()
         else:
-            print ("Unknown command. Type h for help.")
-    print ("Goodbye!")
+            print (HELP)
 
 if __name__ == "__main__":
     main()
-
